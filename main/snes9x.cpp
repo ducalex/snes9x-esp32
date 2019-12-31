@@ -142,7 +142,7 @@ void S9xSyncSpeed (void)
 	//IPPU.RenderThisFrame = skip == 0;
 	//if (skip++ == 10) skip = 0;
 	//IPPU.RenderThisFrame = true;
-	
+
 	loops++;
 
 	uint32_t time = (esp_timer_get_time() / 1000);
@@ -176,7 +176,7 @@ bool S9xPollPointer (uint32 id, int16 *x, int16 *y)
 
 s9xcommand_t S9xGetPortCommandT (const char *n)
 {
-	s9xcommand_t	cmd;
+	s9xcommand_t	cmd = {};
 	return cmd;
 }
 
@@ -277,7 +277,7 @@ void snes_ppu_task(void *arg)
 }
 
 
-void snes_task(void *arg) // IRAM_ATTR 
+void snes_task(void *arg) // IRAM_ATTR
 {
 	odroid_input_set_callback(&snes_input_callback);
 
@@ -295,7 +295,7 @@ void snes_task(void *arg) // IRAM_ATTR
 	Settings.CartBName[0] = 0;
 
 	S9xLoadConfigFiles(NULL, 0);
-	
+
 	if (!Memory.Init() || !S9xInitAPU())
 	{
 		fprintf(stderr, "Snes9x: Memory allocation failure - not enough RAM/virtual memory available.\nExiting...\n");
@@ -309,7 +309,7 @@ void snes_task(void *arg) // IRAM_ATTR
 	odroid_spi_bus_acquire();
 	loaded = Memory.LoadROM((const char*)arg);
 	odroid_spi_bus_release();
-	
+
 	if (!loaded)
 	{
 		printf("Error opening the ROM file.\n");
@@ -329,7 +329,7 @@ void snes_task(void *arg) // IRAM_ATTR
 	S9xSetController(1, CTL_NONE, 1, 0, 0, 0);
 	S9xInitInputDevices();
 	S9xInitDisplay(NULL, 0);
-	
+
     MAP_BUTTON(ODROID_INPUT_A, "Joypad1 A");
     MAP_BUTTON(ODROID_INPUT_B, "Joypad1 B");
     MAP_BUTTON(ODROID_INPUT_START, "Joypad1 X");
@@ -342,7 +342,7 @@ void snes_task(void *arg) // IRAM_ATTR
     MAP_BUTTON(ODROID_INPUT_RIGHT, "Joypad1 Right");
     MAP_BUTTON(ODROID_INPUT_UP, "Joypad1 Up");
     MAP_BUTTON(ODROID_INPUT_DOWN, "Joypad1 Down");
-	
+
 	MEMORY_BYTES;
 
 	while (1)

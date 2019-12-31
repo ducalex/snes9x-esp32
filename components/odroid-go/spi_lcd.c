@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of odroid-go-std-lib.
  * Copyright (c) 2019 ducalex.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "esp_system.h"
 #include "esp_heap_caps.h"
@@ -242,7 +243,7 @@ void spi_lcd_fill(int x0, int y0, int w, int h, uint16_t color)
 
         spi_lcd_clip(x0, y0, x0 + w, y0 + h);
         spi_lcd_cmd(0x2C); // Write
-        
+
         uint16_t buffer[128] = {color};
 
         for(int pixels = w * h; pixels > 0; pixels -= 128) {
@@ -262,7 +263,7 @@ void spi_lcd_drawPixel(int x, int y, uint16_t color)
 void spi_lcd_usePalette(bool use)
 {
     useColorPalette = use;
-    
+
     if (useFrameBuffer) {
         spi_lcd_fb_alloc(); // Resize framebuffer
     }
@@ -306,7 +307,7 @@ void spi_lcd_clear()
 static uint8_t getCharPtr(uint8_t c)
 {
     fontChar.dataPtr = 4;
-    
+
     do {
         fontChar.charCode = displayFont[fontChar.dataPtr++];
         fontChar.adjYOffset = displayFont[fontChar.dataPtr++];
@@ -381,7 +382,7 @@ void spi_lcd_setFontColor(uint16_t color)
 void spi_lcd_print(int x, int y, char *string)
 {
     int orig_x = x, orig_y = y;
-    
+
     for (int i = 0; i < strlen(string); i++) {
         if ((enablePrintWrap && x >= (windowWidth - font_width)) || string[i] == '\n') {
             y += font_height + 5;
@@ -401,7 +402,7 @@ void spi_lcd_printf(int x, int y, char *format, ...)
     va_start(argptr, format);
     vsprintf(buffer, format, argptr);
     va_end(argptr);
-    
+
     spi_lcd_print(x, y, buffer);
 }
 
@@ -431,10 +432,10 @@ void spi_lcd_fb_flush()
 
     int idx = 0;
     int inProgress = 0;
-        
+
     spi_transaction_t *rtrans;
     esp_err_t ret;
-    
+
     spi_lcd_clip(windowXOffset, windowYOffset, windowWidth + windowXOffset - 1, windowHeight + windowYOffset - 1);
     spi_lcd_cmd(0x2C); // Write
 
@@ -494,7 +495,7 @@ void spi_lcd_fb_setPtr(void *buffer)
     }
     currFbPtr = buffer;
     currFbPtrIsExternal = true;
-    
+
     spi_lcd_fb_update();
 }
 
@@ -521,10 +522,10 @@ void spi_lcd_fb_alloc()
     //    currFbPtrIsExternal = false;
     //    currFbPtr = NULL;
     //}
-    
+
     bufferSize = windowWidth * windowHeight * (useColorPalette ? 1 : 2);
     currFbPtr = heap_caps_realloc(currFbPtr, bufferSize, MALLOC_CAP_8BIT);
-    
+
     memset(currFbPtr, 0, bufferSize);
 }
 
@@ -548,7 +549,7 @@ void IRAM_ATTR displayTask(void *arg)
 void IRAM_ATTR spi_lcd_init()
 {
     if (lcd_initialized) return;
-    
+
     printf("spi_lcd_init: Initializing SPI LCD.\n");
 
     dispSem = xSemaphoreCreateBinary();
@@ -601,7 +602,7 @@ void IRAM_ATTR spi_lcd_init()
     spi_lcd_usePalette(false);
     spi_lcd_useFrameBuffer(false);
     spi_lcd_clear();
-    
+
     //Enable backlight
     backlight_init();
 

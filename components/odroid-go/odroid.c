@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of odroid-go-std-lib.
  * Copyright (c) 2019 ducalex.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -19,6 +19,7 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "esp_heap_caps.h"
+#include "driver/gpio.h"
 #include "odroid.h"
 
 static SemaphoreHandle_t spiLock = NULL;
@@ -52,7 +53,7 @@ void odroid_system_init()
     // LED
 	gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT);
 	gpio_set_level(GPIO_NUM_2, 0);
-    
+
     // SD Card (needs to be before LCD)
     odroid_sdcard_init();
 
@@ -64,7 +65,7 @@ void odroid_system_init()
 
     // Input
     odroid_input_init();
-    
+
     // Sound
     //odroid_sound_init();
 }
