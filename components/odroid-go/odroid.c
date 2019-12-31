@@ -66,7 +66,7 @@ void odroid_system_init()
     odroid_input_init();
     
     // Sound
-    odroid_sound_init();
+    //odroid_sound_init();
 }
 
 void odroid_system_led_set(int value)
