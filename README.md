@@ -1,3 +1,6 @@
+# This port is now abandoned.
+A new port is being worked on as part of [retro-go](https://github.com/ducalex/retro-go/) and is already in better shape than this one.
+
 # Snes9x for Odroid GO
 This is a port of the snes9x emulator to the Odroid Go.
 
